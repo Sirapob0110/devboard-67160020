@@ -1,11 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import PostCard from "./PostCard";
 import LoadingSpinner from "./LoadingSpinner";
+import useFetch from "../hooks/useFetch";
 
 function PostList({ favorites, onToggleFavorite }) {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // ⭐ ใช้ custom hook
+  const { data, loading, error } = useFetch(
+    "https://jsonplaceholder.typicode.com/posts",
+  );
+
+  const posts = data.slice(0, 20);
 
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
@@ -13,28 +17,6 @@ function PostList({ favorites, onToggleFavorite }) {
   // ⭐ pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
-
-  // ⭐ fetch logic
-  async function fetchPosts() {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-      if (!res.ok) throw new Error("ดึงข้อมูลไม่สำเร็จ");
-
-      const data = await res.json();
-      setPosts(data.slice(0, 20));
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
 
   // filter search
   const filtered = posts.filter((post) =>
@@ -81,39 +63,15 @@ function PostList({ favorites, onToggleFavorite }) {
 
   return (
     <div>
-      {/* หัวข้อ + ปุ่มโหลดใหม่ */}
-      <div
+      <h2
         style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          color: "#2d3748",
+          borderBottom: "2px solid #1e40af",
+          paddingBottom: "0.5rem",
         }}
       >
-        <h2
-          style={{
-            color: "#2d3748",
-            borderBottom: "2px solid #1e40af",
-            paddingBottom: "0.5rem",
-          }}
-        >
-          โพสต์ล่าสุด
-        </h2>
-
-        <button
-          onClick={fetchPosts}
-          style={{
-            background: "#2563eb",
-            color: "white",
-            border: "none",
-            padding: "0.4rem 0.8rem",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontSize: "0.9rem",
-          }}
-        >
-          🔄 โหลดใหม่
-        </button>
-      </div>
+        โพสต์ล่าสุด
+      </h2>
 
       {/* Sort */}
       <button
@@ -140,7 +98,7 @@ function PostList({ favorites, onToggleFavorite }) {
         value={search}
         onChange={(e) => {
           setSearch(e.target.value);
-          setCurrentPage(1); // รีเซ็ตหน้าเมื่อค้นหา
+          setCurrentPage(1);
         }}
         style={{
           width: "100%",
@@ -159,7 +117,7 @@ function PostList({ favorites, onToggleFavorite }) {
         </p>
       )}
 
-      {/* ⭐ แสดงโพสต์ตาม pagination */}
+      {/* แสดงโพสต์ */}
       {paginatedPosts.map((post) => (
         <PostCard
           key={post.id}
@@ -169,7 +127,7 @@ function PostList({ favorites, onToggleFavorite }) {
         />
       ))}
 
-      {/* ⭐ Pagination */}
+      {/* Pagination */}
       <div
         style={{
           display: "flex",
