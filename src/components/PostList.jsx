@@ -10,16 +10,15 @@ function PostList({ posts, favorites, onToggleFavorite }) {
     post.title.toLowerCase().includes(search.toLowerCase()),
   );
 
-  // sort ตาม order
+  // sort โพสต์
   const sortedPosts = [...filtered].sort((a, b) => {
     if (sortOrder === "desc") {
-      return b.id - a.id; // ใหม่สุดก่อน
+      return b.id - a.id;
     } else {
-      return a.id - b.id; // เก่าสุดก่อน
+      return a.id - b.id;
     }
   });
 
-  // toggle sort
   function toggleSort() {
     setSortOrder(sortOrder === "desc" ? "asc" : "desc");
   }
@@ -41,12 +40,17 @@ function PostList({ posts, favorites, onToggleFavorite }) {
         onClick={toggleSort}
         style={{
           marginBottom: "0.75rem",
-          background: "#edf2f7",
-          border: "1px solid #cbd5e0",
-          padding: "0.4rem 0.75rem",
+          background: "#1e40af",
+          color: "white",
+          border: "none",
+          padding: "0.45rem 0.9rem",
           borderRadius: "6px",
           cursor: "pointer",
+          fontSize: "0.9rem",
+          fontWeight: "500",
         }}
+        onMouseOver={(e) => (e.target.style.background = "#1d4ed8")}
+        onMouseOut={(e) => (e.target.style.background = "#1e40af")}
       >
         {sortOrder === "desc" ? "🔽 ใหม่สุดก่อน" : "🔼 เก่าสุดก่อน"}
       </button>
