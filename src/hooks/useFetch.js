@@ -4,6 +4,11 @@ function useFetch(url) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [reload, setReload] = useState(0);
+
+  function refetch() {
+    setReload((prev) => prev + 1);
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -12,21 +17,20 @@ function useFetch(url) {
         setError(null);
 
         const res = await fetch(url);
-        if (!res.ok) throw new Error("โหลดข้อมูลไม่สำเร็จ");
-
         const json = await res.json();
+
         setData(json);
       } catch (err) {
-        setError(err.message);
+        setError("Failed to fetch data");
       } finally {
         setLoading(false);
       }
     }
 
     fetchData();
-  }, [url]);
+  }, [url, reload]);
 
-  return { data, loading, error };
+  return { data, loading, error, refetch };
 }
 
 export default useFetch;
