@@ -5,7 +5,7 @@ import useFetch from "../hooks/useFetch";
 
 function PostList({ favorites, onToggleFavorite }) {
   // ⭐ ใช้ custom hook
-  const { data, loading, error } = useFetch(
+  const { data, loading, error, refetch } = useFetch(
     "https://jsonplaceholder.typicode.com/posts",
   );
 
@@ -72,6 +72,25 @@ function PostList({ favorites, onToggleFavorite }) {
       >
         โพสต์ล่าสุด
       </h2>
+
+      {/* Refresh Button */}
+      <button
+        onClick={refetch}
+        style={{
+          marginBottom: "0.75rem",
+          background: "#16a34a",
+          color: "white",
+          border: "none",
+          padding: "0.45rem 0.9rem",
+          borderRadius: "6px",
+          cursor: "pointer",
+          fontSize: "0.9rem",
+          fontWeight: "500",
+          marginRight: "0.5rem",
+        }}
+      >
+        🔄 Refresh Posts
+      </button>
 
       {/* Sort */}
       <button
