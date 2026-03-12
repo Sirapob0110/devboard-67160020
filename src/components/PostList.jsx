@@ -8,27 +8,28 @@ function PostList({ favorites, onToggleFavorite }) {
   const [error, setError] = useState(null);
 
   const [search, setSearch] = useState("");
-  const [sortOrder, setSortOrder] = useState("desc"); // desc = ใหม่สุดก่อน
+  const [sortOrder, setSortOrder] = useState("desc");
 
-  // ดึงโพสต์จาก API
-  useEffect(() => {
-    async function fetchPosts() {
-      try {
-        setLoading(true);
-        setError(null);
+  // ⭐ แยก fetch logic ออกมา
+  async function fetchPosts() {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-        if (!res.ok) throw new Error("ดึงข้อมูลไม่สำเร็จ");
+      const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+      if (!res.ok) throw new Error("ดึงข้อมูลไม่สำเร็จ");
 
-        const data = await res.json();
-        setPosts(data.slice(0, 20)); // เอา 20 โพสต์แรก
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+      const data = await res.json();
+      setPosts(data.slice(0, 20));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
+  }
 
+  // โหลดครั้งแรกตอนเปิดหน้า
+  useEffect(() => {
     fetchPosts();
   }, []);
 
@@ -69,17 +70,42 @@ function PostList({ favorites, onToggleFavorite }) {
 
   return (
     <div>
-      <h2
+      {/* หัวข้อ + ปุ่มโหลดใหม่ */}
+      <div
         style={{
-          color: "#2d3748",
-          borderBottom: "2px solid #1e40af",
-          paddingBottom: "0.5rem",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        โพสต์ล่าสุด
-      </h2>
+        <h2
+          style={{
+            color: "#2d3748",
+            borderBottom: "2px solid #1e40af",
+            paddingBottom: "0.5rem",
+          }}
+        >
+          โพสต์ล่าสุด
+        </h2>
 
-      {/* Sort Button */}
+        {/* ⭐ ปุ่มโหลดใหม่ */}
+        <button
+          onClick={fetchPosts}
+          style={{
+            background: "#2563eb",
+            color: "white",
+            border: "none",
+            padding: "0.4rem 0.8rem",
+            borderRadius: "6px",
+            cursor: "pointer",
+            fontSize: "0.9rem",
+          }}
+        >
+          🔄 โหลดใหม่
+        </button>
+      </div>
+
+      {/* Sort */}
       <button
         onClick={toggleSort}
         style={{
@@ -93,8 +119,6 @@ function PostList({ favorites, onToggleFavorite }) {
           fontSize: "0.9rem",
           fontWeight: "500",
         }}
-        onMouseOver={(e) => (e.target.style.background = "#1d4ed8")}
-        onMouseOut={(e) => (e.target.style.background = "#1e40af")}
       >
         {sortOrder === "desc" ? "🔽 ใหม่สุดก่อน" : "🔼 เก่าสุดก่อน"}
       </button>
