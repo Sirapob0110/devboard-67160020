@@ -10,7 +10,11 @@ function PostList({ favorites, onToggleFavorite }) {
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
 
-  // ⭐ แยก fetch logic ออกมา
+  // ⭐ pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 10;
+
+  // ⭐ fetch logic
   async function fetchPosts() {
     try {
       setLoading(true);
@@ -28,7 +32,6 @@ function PostList({ favorites, onToggleFavorite }) {
     }
   }
 
-  // โหลดครั้งแรกตอนเปิดหน้า
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -50,6 +53,14 @@ function PostList({ favorites, onToggleFavorite }) {
   function toggleSort() {
     setSortOrder(sortOrder === "desc" ? "asc" : "desc");
   }
+
+  // ⭐ pagination logic
+  const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
+
+  const paginatedPosts = sortedPosts.slice(
+    (currentPage - 1) * postsPerPage,
+    currentPage * postsPerPage,
+  );
 
   if (loading) return <LoadingSpinner />;
 
@@ -88,7 +99,6 @@ function PostList({ favorites, onToggleFavorite }) {
           โพสต์ล่าสุด
         </h2>
 
-        {/* ⭐ ปุ่มโหลดใหม่ */}
         <button
           onClick={fetchPosts}
           style={{
@@ -128,7 +138,10 @@ function PostList({ favorites, onToggleFavorite }) {
         type="text"
         placeholder="ค้นหาโพสต์..."
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setCurrentPage(1); // รีเซ็ตหน้าเมื่อค้นหา
+        }}
         style={{
           width: "100%",
           padding: "0.5rem 0.75rem",
@@ -146,7 +159,8 @@ function PostList({ favorites, onToggleFavorite }) {
         </p>
       )}
 
-      {sortedPosts.map((post) => (
+      {/* ⭐ แสดงโพสต์ตาม pagination */}
+      {paginatedPosts.map((post) => (
         <PostCard
           key={post.id}
           post={post}
@@ -154,6 +168,35 @@ function PostList({ favorites, onToggleFavorite }) {
           onToggleFavorite={() => onToggleFavorite(post.id)}
         />
       ))}
+
+      {/* ⭐ Pagination */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "1rem",
+          marginTop: "1.5rem",
+        }}
+      >
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+        >
+          ← ก่อนหน้า
+        </button>
+
+        <span>
+          หน้า {currentPage} / {totalPages}
+        </span>
+
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => p + 1)}
+        >
+          ถัดไป →
+        </button>
+      </div>
     </div>
   );
 }
