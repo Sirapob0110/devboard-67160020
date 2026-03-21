@@ -3,7 +3,7 @@ import PostCard from "./PostCard";
 import LoadingSpinner from "./LoadingSpinner";
 import useFetch from "../hooks/useFetch";
 
-function PostList({ favorites, onToggleFavorite }) {
+function PostList() {
   // ⭐ ใช้ custom hook
   const { data, loading, error, refetch } = useFetch(
     "https://jsonplaceholder.typicode.com/posts",
@@ -136,14 +136,9 @@ function PostList({ favorites, onToggleFavorite }) {
         </p>
       )}
 
-      {/* แสดงโพสต์ */}
+      {/* แสดงโพสต์ — PostCard จัดการ favorites เองผ่าน useFavorites() */}
       {paginatedPosts.map((post) => (
-        <PostCard
-          key={post.id}
-          post={post}
-          isFavorite={favorites.includes(post.id)}
-          onToggleFavorite={() => onToggleFavorite(post.id)}
-        />
+        <PostCard key={post.id} post={post} />
       ))}
 
       {/* Pagination */}
