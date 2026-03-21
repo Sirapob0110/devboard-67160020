@@ -26,6 +26,9 @@ function Navbar() {
         <Link to="/" style={{ color: "white", textDecoration: "none" }}>
           หน้าหลัก
         </Link>
+        <Link to="/search" style={{ color: "white", textDecoration: "none" }}>
+          🔍 ค้นหา
+        </Link>
         <Link to="/profile" style={{ color: "white", textDecoration: "none" }}>
           สมาชิก
         </Link>
