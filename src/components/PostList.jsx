@@ -4,7 +4,6 @@ import LoadingSpinner from "./LoadingSpinner";
 import useFetch from "../hooks/useFetch";
 
 function PostList() {
-  // ⭐ ใช้ custom hook
   const { data, loading, error, refetch } = useFetch(
     "https://jsonplaceholder.typicode.com/posts",
   );
@@ -14,16 +13,13 @@ function PostList() {
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
 
-  // ⭐ pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
 
-  // filter search
   const filtered = posts.filter((post) =>
     post.title.toLowerCase().includes(search.toLowerCase()),
   );
 
-  // sort
   const sortedPosts = [...filtered].sort((a, b) => {
     if (sortOrder === "desc") {
       return b.id - a.id;
@@ -36,7 +32,6 @@ function PostList() {
     setSortOrder(sortOrder === "desc" ? "asc" : "desc");
   }
 
-  // ⭐ pagination logic
   const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
 
   const paginatedPosts = sortedPosts.slice(
@@ -130,13 +125,24 @@ function PostList() {
         }}
       />
 
+      {/* ✅ เพิ่มตรงนี้ */}
+      <p
+        style={{
+          textAlign: "center",
+          color: "#9ca3af",
+          marginBottom: "1rem",
+          fontSize: "0.9rem",
+        }}
+      >
+        โพสต์ทั้งหมด: {posts.length} รายการ
+      </p>
+
       {sortedPosts.length === 0 && (
         <p style={{ color: "#718096", textAlign: "center", padding: "2rem" }}>
           ไม่พบโพสต์ที่ค้นหา
         </p>
       )}
 
-      {/* แสดงโพสต์ — PostCard จัดการ favorites เองผ่าน useFavorites() */}
       {paginatedPosts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}
